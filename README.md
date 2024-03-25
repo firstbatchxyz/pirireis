@@ -1,7 +1,9 @@
+<div style="text-align: center;">
 <figure>
 <img src="piri.jpg" style="width: 70%; height: auto;"  alt="Image description">
   <figcaption>The powerful, fearless ~Piri Reis~</figcaption>
 </figure>
+</div>
 
 ## PiriReis
 
