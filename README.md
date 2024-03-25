@@ -1,4 +1,7 @@
-![Piri Reis in Dynamic Pose](piri.jpg)
+<figure>
+<img src="piri.jpg" style="width: 70%; height: auto;"  alt="Image description">
+  <figcaption>The powerful, fearless ~Piri Reis~</figcaption>
+</figure>
 
 ## PiriReis
 
