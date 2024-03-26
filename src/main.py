@@ -1,18 +1,15 @@
 import os
 
 import networkx as nx
-from src.graph.dstruct import KnowledgeGraph, NetworkTree
-from src.nn.bert import BertEmbedding
 from tqdm import tqdm
-from src.nn.llms import Haiku, YiChat, OpenAIWorker
 import numpy as np
 from itertools import chain
-from src.nn.prompts import *
 from ast import literal_eval
-from src.graph.partition import LeidenTree, symmetrze_nx
-from src.nn.embeddings import JinaEmbedding
 from dria import Dria
 from decouple import config
+from src import *
+import os
+
 
 def generate_knowledge_graph(contract_id, num_samples=50):
     """
@@ -21,6 +18,7 @@ def generate_knowledge_graph(contract_id, num_samples=50):
     :param num_samples:
     :return:
     """
+    db = DBWorker()
     haiku = Haiku()
     gpt = OpenAIWorker()
     kg = KnowledgeGraph()
@@ -65,18 +63,20 @@ def generate_knowledge_graph(contract_id, num_samples=50):
                 continue
 
     print(f"Finished graph with {(error/num_samples) * 100}% errors on JSON calling.")
-    os.mkdir("graphs") if not os.path.exists("graphs") else None
-    kg.save_graph(f"graphs/graph_{contract_id}.gml")
+    db.update_knowledge_graph(contract_id, knowledge_graph=kg.to_string())
 
 
-def generate_context_hierarchy(contract_id)-> NetworkTree:
+def generate_context_tree(contract_id)-> NetworkTree:
     """
     Generate a context hierarchy from a knowledge graph.
     :param contract_id:
     :return:
     """
+    db = DBWorker()
+    gml = db.get_knowledge_graph(contract_id)
+
     kg = KnowledgeGraph()
-    kg.load_graph(f"graphs/graph_{contract_id}.gml")
+    kg.from_string(gml)
     g = kg.graph
     sym_g = symmetrze_nx(g)
     adjacency = nx.to_scipy_sparse_array(sym_g, nodelist=list(g.nodes))
@@ -93,13 +93,14 @@ def generate_context_hierarchy(contract_id)-> NetworkTree:
     leaves_w = [[list(g.nodes)[ind] for ind in l] for l in leaves]
     hgraph = lt.generate_graph(leaves=leaves_w, contract_id=contract_id, bert=bert, haiku=haiku, embedding=je)
 
+    #TODO: add write-routine here for context tree
     return hgraph
 
 
 
 if __name__ == "__main__":
     #generate_knowledge_graph()
-    tree = generate_context_hierarchy("0USsyWjNe6nXWGkebYfYKC-VjQwJaA2ZS2HzALzgpgU")
+    tree = generate_context_tree("0USsyWjNe6nXWGkebYfYKC-VjQwJaA2ZS2HzALzgpgU")
     embd = JinaEmbedding()
 
     embedding = embd.encode("How does Arweave provide security?")
@@ -111,3 +112,13 @@ if __name__ == "__main__":
     print([node.summary for node in path])
     print(distance)
     print("")
+
+if __name__ == "__main__":
+
+    #os.environ["CONTRACT_ID"] = ""
+    #os.environ["NUM_SAMPLES"] = 50
+    contract_id = os.getenv("CONTRACT_ID")
+    num_samples = os.getenv("NUM_SAMPLES")
+
+    #generate_knowledge_graph(contract_id, num_samples)
+    #tree = generate_context_hierarchy(args.contract_id)

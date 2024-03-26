@@ -10,6 +10,8 @@ python = ">=3.9, <3.12"
 scikit-learn = "^1.4.1.post1"
 anthropic = "^0.21.3"
 python-decouple = "^3.8"
+pymongo = "^4.6.2"
+dria = "^0.1.20"
 
 [tool.poetry.group.dev.dependencies]
 openai = "^1.14.3"

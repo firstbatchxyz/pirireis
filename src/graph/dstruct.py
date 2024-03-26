@@ -2,7 +2,6 @@ import networkx as nx
 from anytree import NodeMixin
 from sklearn.base import BaseEstimator
 from sklearn.metrics.pairwise import cosine_similarity
-import numpy as np
 
 
 class KnowledgeGraph:
@@ -53,6 +52,13 @@ class KnowledgeGraph:
     def load_graph(self, file_path):
         self.graph = nx.read_gml(file_path)
         print("Graph loaded successfully.")
+
+    def to_string(self):
+        return "\n".join(list(nx.generate_gml(self.graph))).encode("ascii")
+
+    # from string
+    def from_string(self, gml:str):
+        self.graph = nx.parse_gml(gml.split("\n"))
 
 
 class NetworkTreeNode(NodeMixin, BaseEstimator):
