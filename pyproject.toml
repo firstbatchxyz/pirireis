@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "pirireis"
+version = "0.1.0"
+description = "PiriReis constructs a \"hierarchical context tree\" from Dria Indices, where the root node encapsulates the most generalized data concept, and the leaf nodes represent the most detailed sub-contexts. This hierarchical structure facilitates query enhancement and compatibility assessment of indices by detailing contexts at varying levels of granularity."
+authors = ["andthattoo <omer@firstbatch.xyz>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9, <3.12"
+scikit-learn = "^1.4.1.post1"
+anthropic = "^0.21.3"
+python-decouple = "^3.8"
+
+[tool.poetry.group.dev.dependencies]
+openai = "^1.14.3"
+oaib = "^1.2.0"
+numpy = "^1.26.4"
+pandas = "^2.2.1"
+anytree = "^2.12.1"
+graspologic = "^3.3.0"
+networkx = "^2.7.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
