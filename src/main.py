@@ -1,18 +1,18 @@
 import os
 
 import networkx as nx
-from librarian.dstruct import KnowledgeGraph, NetworkTree
-from librarian.bert import BertEmbedding
+from src.graph.dstruct import KnowledgeGraph, NetworkTree
+from src.nn.bert import BertEmbedding
 from tqdm import tqdm
-from librarian.llms import Haiku, YiChat, OpenAIWorker
+from src.nn.llms import Haiku, YiChat, OpenAIWorker
 import numpy as np
 from itertools import chain
-from prompts import *
+from src.nn.prompts import *
 from ast import literal_eval
-from partition import LeidenTree, symmetrze_nx
-from librarian.embeddings import JinaEmbedding
+from src.graph.partition import LeidenTree, symmetrze_nx
+from src.nn.embeddings import JinaEmbedding
 from dria import Dria
-
+from decouple import config
 
 def generate_knowledge_graph(contract_id, num_samples=50):
     """
@@ -25,7 +25,7 @@ def generate_knowledge_graph(contract_id, num_samples=50):
     gpt = OpenAIWorker()
     kg = KnowledgeGraph()
 
-    client = Dria(api_key="92d87dc1-930a-4427-914f-702bd954ca76")
+    client = Dria(api_key=config("DRIA_API_KEY"))
     client.set_contract(contract_id)
     entry_count = client.entry_count() - 1
     error = 0

@@ -87,7 +87,7 @@ class YiChat:
 if __name__ == "__main__":
     print(ModelEnum.gpt_3_5_turbo == "gpt-3.5-turbo")
     mixtral = YiChat()
-    print(mixtral("What is your name (of the model)?"))
+    print(mixtral("What is your name (of the model)?", ""))
 
     # Create an OpenAI client with your deepinfra token and endpoint
     openai = OpenAI(

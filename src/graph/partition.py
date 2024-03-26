@@ -6,7 +6,7 @@ from graspologic.partition import leiden
 from sklearn.base import BaseEstimator
 import pickle
 from sklearn.cluster import AffinityPropagation
-from librarian.dstruct import NetworkTree, NetworkTreeNode
+from src.dstruct import NetworkTree, NetworkTreeNode
 from typing import List
 import networkx as nx
 import re

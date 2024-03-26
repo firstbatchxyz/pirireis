@@ -39,18 +39,3 @@ conflicting_information = [
 "Is the Great Wall of China visible from space or not?",
 "Are tomatoes a fruit or a vegetable?"
 ]
-"""
-import spacy
-nlp = spacy.load("en_core_web_sm")
-from spacy_experimental.coref.coref_component import DEFAULT_COREF_MODEL
-from spacy_experimental.coref.coref_util import DEFAULT_CLUSTER_PREFIX
-
-config={
-    "model": DEFAULT_COREF_MODEL,
-    "span_cluster_prefix": DEFAULT_CLUSTER_PREFIX,
-}
-nlp.add_pipe("experimental_coref", config=config)
-"""
-from decouple import config
-SECRET_KEY = config('DEEPINFRA_API_TOKEN')
-print(SECRET_KEY)
