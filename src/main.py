@@ -93,25 +93,11 @@ def generate_context_tree(contract_id)-> NetworkTree:
     leaves_w = [[list(g.nodes)[ind] for ind in l] for l in leaves]
     hgraph = lt.generate_graph(leaves=leaves_w, contract_id=contract_id, bert=bert, haiku=haiku, embedding=je)
 
-    #TODO: add write-routine here for context tree
+    gml = hgraph.to_json()
+    db.update_context_tree(contract_id, context_tree=gml)
     return hgraph
 
 
-
-if __name__ == "__main__":
-    #generate_knowledge_graph()
-    tree = generate_context_tree("0USsyWjNe6nXWGkebYfYKC-VjQwJaA2ZS2HzALzgpgU")
-    embd = JinaEmbedding()
-
-    embedding = embd.encode("How does Arweave provide security?")
-    root = tree.get_root()
-    path, distance = root.traverse_to_leaf_with_beam(embedding=embedding, top_k=3)
-    path2 = root.traverse_to_leaf_beam_search(embedding=embedding, top_k=3)
-    #p, d = tree.best_leaf(embedding=embedding)
-
-    print([node.summary for node in path])
-    print(distance)
-    print("")
 
 if __name__ == "__main__":
 
@@ -120,5 +106,14 @@ if __name__ == "__main__":
     contract_id = os.getenv("CONTRACT_ID")
     num_samples = os.getenv("NUM_SAMPLES")
 
-    #generate_knowledge_graph(contract_id, num_samples)
-    #tree = generate_context_hierarchy(args.contract_id)
+    generate_knowledge_graph("0USsyWjNe6nXWGkebYfYKC-VjQwJaA2ZS2HzALzgpgU", num_samples=50)
+    tree = generate_context_tree("0USsyWjNe6nXWGkebYfYKC-VjQwJaA2ZS2HzALzgpgU")
+    embd = JinaEmbedding()
+    embedding = embd.encode("How does Arweave provide security?")
+    root = tree.get_root()
+    path, distance = root.traverse_to_leaf_with_beam(embedding=embedding, top_k=3)
+    path2 = root.traverse_to_leaf_beam_search(embedding=embedding, top_k=3)
+    #p, d = tree.best_leaf(embedding=embedding)
+
+    print([node.summary for node in path])
+    print(distance)

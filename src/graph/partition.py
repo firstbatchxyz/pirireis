@@ -10,6 +10,7 @@ from src.graph.dstruct import NetworkTree, NetworkTreeNode
 from typing import List
 import networkx as nx
 import re
+import base64
 
 def symmetrze_nx(g):
     """Leiden requires a symmetric/undirected graph. This converts a directed graph to
@@ -193,7 +194,7 @@ class LeidenTree(BaseNetworkTree):
             leaf.embedding = embedding.encode(summary)
         return leaves
 
-    def generate_graph(self, contract_id, leaves, bert, haiku, embedding):
+    def generate_graph(self, contract_id, leaves, bert, haiku, embedding)->NetworkTree:
         """
         Generates a hierarchical graph based on the clustering results.
         1- Generate embeddings

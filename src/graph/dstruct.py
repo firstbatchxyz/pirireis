@@ -2,7 +2,7 @@ import networkx as nx
 from anytree import NodeMixin
 from sklearn.base import BaseEstimator
 from sklearn.metrics.pairwise import cosine_similarity
-
+import json
 
 class KnowledgeGraph:
     def __init__(self):
@@ -52,14 +52,6 @@ class KnowledgeGraph:
     def load_graph(self, file_path):
         self.graph = nx.read_gml(file_path)
         print("Graph loaded successfully.")
-
-    def to_string(self):
-        return "\n".join(list(nx.generate_gml(self.graph))).encode("ascii")
-
-    # from string
-    def from_string(self, gml:str):
-        self.graph = nx.parse_gml(gml.split("\n"))
-
 
 class NetworkTreeNode(NodeMixin, BaseEstimator):
     def __init__(self, name, keywords=None, summary=None, query=None, parent=None, cid=None):
@@ -229,11 +221,47 @@ class NetworkTree(BaseEstimator):
                 nodes.append(node)
         return nodes
 
+    def to_json(self):
+        def node_to_dict(node):
+            node_dict = {
+                'name': node.name,
+                'summary': node.summary,
+                'query': node.query,
+                'keywords': node.keywords,
+                'cid': node.cid,
+                'children': [node_to_dict(child) for child in node.children]
+            }
+            return node_dict
+        tree_dict = node_to_dict(self.get_root())
+        json_string = json.dumps(tree_dict)
+        return json_string
+
+    @classmethod
+    def from_json(cls, json_string):
+        def dict_to_node(node_dict):
+            node = NetworkTreeNode(
+                name=node_dict['name'],
+                summary=node_dict['summary'],
+                query=node_dict['query'],
+                keywords=node_dict['keywords'],
+                cid=node_dict['cid']
+            )
+            for child_dict in node_dict['children']:
+                child_node = dict_to_node(child_dict)
+                node.add_child(child_node)
+            return node
+        tree_dict = json.loads(json_string)
+        root_node = dict_to_node(tree_dict)
+        tree = cls()
+        tree.nodes = [n for n in root_node.traverse()]
+        return tree
+
+
 
 if __name__ == "__main__":
 
-    k = KnowledgeGraph()
-    k.load_graph("graph_5KNcQ-phrxlJlKmHR4RYxEtJglR79-d7coRbA0HqTK0.gml")
+    #k = KnowledgeGraph()
+    #k.load_graph("graph_5KNcQ-phrxlJlKmHR4RYxEtJglR79-d7coRbA0HqTK0.gml")
 
     tree = NetworkTree()
     node1 = tree.create_node("Node 1", keywords=["keyword1", "keyword2"], summary="Summary 1", query="Query 1")
@@ -243,5 +271,6 @@ if __name__ == "__main__":
     tree.add_parent(node2, node1)
     tree.add_parent(node3, node1)
 
-    for node in tree.traverse():
-        print
+    d = tree.to_json()
+
+    new_tree = NetworkTree().from_json(d)
